@@ -23,4 +23,4 @@ window.onload = function() {
     for (var i=0; i < 12; i++) {
         collectionContainer.innerHTML += collectionItemTemplate;
     }
-}
+};
