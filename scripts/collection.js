@@ -1,4 +1,5 @@
-var collectionItemTemplate =
+var buildCollectionItemTemplate = function() {
+    var template =
      '<div class="collection-album-container column fourth">'
    + '  <img src="assets/images/album_covers/01.png"/>'
    + '  <div class="collection-album-info caption">'
@@ -14,13 +15,14 @@ var collectionItemTemplate =
    + '</div>'
    ;
    
-window.onload = function() {
-    //select the first element with an alum cover class name
-    var collectionContainer = document.getElementsByClassName('album-covers')[0];
-    //assign an empty string to clear its content 
-    collectionContainer.innerHTML = '';
-    //creat a loop that inserts 12 albums
-    for (var i=0; i < 12; i++) {
-        collectionContainer.innerHTML += collectionItemTemplate;
-    }
+    return $(template);
 };
+ 
+$(window).load(function() {
+    var $collectionContainer = $('.album-covers');
+    $collectionContainer.empty();
+    for (var i=0; i < 12; i++) {
+        var $newThumbnail = buildCollectionItemTemplate();
+        $collectionContainer.append($newThumbnail);
+    }
+});
