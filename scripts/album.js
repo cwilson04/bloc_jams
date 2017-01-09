@@ -56,6 +56,7 @@
          
          if (songNumber !== currentlyPlayingSongNumber) {
            songNumberCell.html(songNumber); 
+           //
            console.log("songNumber type is " + typeof songNumber + "\n and currentlyPlayingSongNumber type is " + typeof currentlyPlayingSongNumber);
          }    
     };
