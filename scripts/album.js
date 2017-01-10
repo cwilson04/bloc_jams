@@ -211,7 +211,7 @@ var previousSong = function() {
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
 var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
 var playerBarPlayButton = '<span class="ion-play"></span>';
- var playerBarPauseButton = '<span class="ion-pause"></span>';
+var playerBarPauseButton = '<span class="ion-pause"></span>';
 
 var currentAlbum = null;
 var currentlyPlayingSongNumber = null;
@@ -221,14 +221,28 @@ var currentVolume = 80;
 
 var $previousButton = $('.main-controls .previous');
 var $nextButton = $('.main-controls .next');
+var $playPauseSelector = $('.main-controls .play-pause')
 
+//Write a function so that users can play and pause a song from the bar, 
+//The function should be named togglePlayFromPlayerBar(), take no arguments
 
+var togglePlayFromPlayerBar = function() {
+    //if player bar is on pause switch to playerBarPlayButton
+    //if player bar is on play switch to playBarPauseButton
+    //I want to select the player-bar and toggle between play and pause
+    if(song.pause) {
+        song.play(playerBarPlayButton);
+    } else {
+        song.pause(playerBarPauseButton);
+    }
+}
 
 
 $(document).ready(function() {
     setCurrentAlbum(albumPicasso);
     $previousButton.click(previousSong);
     $nextButton.click(nextSong);
+    $playPauseSelector.click(togglePlayFromPlayerBar);
 
     });
      
