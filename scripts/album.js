@@ -15,51 +15,50 @@ var createSongRow = function(songNumber, songName, songLength) {
  
      var $row = $(template);
      
-     var clickHandler = function() {
-         //wrap using parseInt()function
-         var songNumber = parseInt($(this).attr('data-song-number'));
-         
-         if (currentlyPlayingSongNumber !== null) {
-             //Revert to song number for currently playing song because user started playing new song
-             var currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
-             currentlyPlayingCell.html(currentlyPlayingSongNumber);
-         }
-         
-         if (currentlyPlayingSongNumber !== songNumber) {
-             $(this).html(pauseButtonTemplate);
-             currentlyPlayingSongNumber = songNumber;
-             currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
-             updatePlayerBarSong();
-         } else if (currentlyPlayingSongNumber === songNumber) {
-             $(this).html(playButtonTemplate);
-             $('.main-controls .play-pause').html(playerBarPlayButton);
-             currentlyPlayingSongNumber = null;
-             currentSongFromAlbum = null;
+var clickHandler = function() {
 
-     };
-     
-     var onHover = function(event) {
-        //when mouse hovers over a song number
-        //if that song number is not currently playing
-        //change number to play button
-        var songNumberCell = $(this).find('.song-item-number');
-        var songNumber = songNumberCell.attr('data-song-number');
-        
-        if (songNumber !== currentlyPlayingSongNumber) {
-         songNumberCell.html(playButtonTemplate);
-        }
-    };
-     
-     var offHover = function(event) {
-         //when mouse leaves the song number
-         //switch play button back to the song number
-        var songNumberCell = $(this).find('.song-item-number');
-        var songNumber = songNumberCell.attr('data-song-number');
+    var songNumber = $(this).attr('data-song-number');
 
-        if (songNumber !== currentlyPlayingSongNumber) {
-            songNumberCell.html(songNumber);
+        if (currentlyPlayingSongNumber !== null) {
+        // Revert to song number for currently playing song because user started playing new song.
+            var currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+            currentlyPlayingCell.html(currentlyPlayingSongNumber);
         }
-    };
+
+        if (currentlyPlayingSongNumber !== songNumber) {
+        // Switch from Play -> Pause button to indicate new song is playing.
+            $(this).html(pauseButtonTemplate);
+            currentlyPlayingSongNumber = songNumber;
+            currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+            updatePlayerBarSong();
+        } else if (currentlyPlayingSongNumber === songNumber) {
+         // Switch from Pause -> Play button to pause currently playing song.
+            $(this).html(playButtonTemplate);
+            $('.main-controls .play-pause').html(playerBarPlayButton);
+            currentlyPlayingSongNumber = null;
+            currentSongFromAlbum = null;
+        }
+
+ };
+
+var onHover = function(event) {
+    var songNumberCell = $(this).find('.song-item-number');
+    var songNumber = songNumberCell.attr('data-song-number');
+
+    
+    if (songNumber !== currentlyPlayingSongNumber) {
+        songNumberCell.html(playButtonTemplate);
+    }
+};
+
+var offHover = function(event) {
+    var songNumberCell = $(this).find('.song-item-number');
+    var songNumber = songNumberCell.attr('data-song-number');
+
+    if (songNumber !== currentlyPlayingSongNumber) {
+        songNumberCell.html(songNumber);
+    }
+};
      
      $row.find('.song-item-number').click(clickHandler);
      $row.hover(onHover, offHover);
@@ -106,7 +105,6 @@ var nextSong = function() {
     };
     
     var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
-    // Note that we're _incrementing_ the song here
     currentSongIndex++;
     
     if (currentSongIndex >= currentAlbum.songs.length) {
@@ -188,6 +186,3 @@ $(document).ready(function() {
     $nextButton.click(nextSong);
 
     });
-     
-     
-};
