@@ -133,6 +133,22 @@ var setCurrentAlbum = function(album) {
      }
  };
  
+//part 1 of assignment 34
+//write a function called setcurrenttimeinplayerbar that takes 1 arugment current time
+var setCurrentTimeInPlayerBar = function(currentTime) {
+    var $currentTime = $('.seek-control .current-time');
+    $currentTime.text(currentSoundFile.getDuration());
+};
+
+//part 2 of assignment 34
+//Write a function called setTotalTimeInPlayerBar() 
+//that takes one argument, totalTime, that sets the text of the element with the .total-time class to the length of the song.
+
+var setTotalTimeInPlayerBar = function(totalTime) {
+    var $totalTime = $('.seek-control .total-time');
+    $totalTime.text(song.length);
+};
+ 
 var updateSeekBarWhileSongPlays = function() {
     if(currentSoundFile) {
         currentSoundFile.bind('timeupdate', function(event) {
@@ -140,6 +156,8 @@ var updateSeekBarWhileSongPlays = function() {
             var $seekBar = $('.seek-control .seek-bar');
             
             udateSeekPercentage($seekBar, seekBarFillRatio);
+            //add setCurrentTimeIn Player method to updateSeekBarWhileSongPlays
+            setCurrentTimeInPlayerBar();
         });
     }
 };
@@ -211,6 +229,8 @@ var updatePlayerBarSong = function() {
     $('.currently-playing .artist-name').text(currentAlbum.artist);
     $('.currently-playing .artist-song-mobile').text(currentSongFromAlbum.title);
     $('.main-controls .play-pause').html(playerBarPauseButton);
+    
+    setTotalTimeInPlayerBar();
 };
 
 var nextSong = function() {
