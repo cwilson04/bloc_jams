@@ -40,12 +40,13 @@
  
      var $row = $(template);
      
+     
      var clickHandler = function() {
          var songNumber = $(this).attr('data-song-number');
          
          if (currentlyPlayingSong !== null) {
              //Revert to song number for currently playing song becauseuser started playing new song
-             var currentlyPlayingCell = $('.song-item-number[data-song-number=' + currentlyPlayingSong + '"]');
+             var currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSong + '"]');
              currentlyPlayingCell.html(currentlyPlayingSong);
          }
          if (currentlyPlayingSong !== songNumber) {
