@@ -99,6 +99,7 @@ var updatePlayerBarSong = function() {
 };
 
 var nextSong = function() {
+    console.log("Inside nextSong");
     
     var getLastSongNumber = function(index) {
         return index == 0 ? currentAlbum.songs.length : index;
@@ -122,7 +123,7 @@ var nextSong = function() {
     $('.main-controls .play-pause').html(playerBarPauseButton);
     
     var lastSongNumber = getLastSongNumber(currentSongIndex);
-    var $nextSongNumberCell = getSongNumberCell;
+    var $nextSongNumberCell = getSongNumberCell(currentlyPlayingSongNumber);
     var $lastSongNumberCell = $('.song-item-number[data-song-number="' + lastSongNumber + '"]');
     
     $nextSongNumberCell.html(pauseButtonTemplate);
