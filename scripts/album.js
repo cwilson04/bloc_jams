@@ -5,8 +5,8 @@ var setSong = function(songNumber) {
     if (currentSoundFile) {
         currentSoundFile.stop();
     }
-    var currentlyPlayingSongNumber = parseInt(songNumber); //used parseInt function to return integer of song number
-    var currentSongFromAlbum = currentAlbum.songs[songNumber - 1]; //list of songs on the current album and -1 to get corrent index number
+    currentlyPlayingSongNumber = parseInt(songNumber); //used parseInt function to return integer of song number
+    currentSongFromAlbum = currentAlbum.songs[songNumber - 1]; //list of songs on the current album and -1 to get corrent index number
 
     currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
         formats: [ 'mp3' ],
@@ -139,7 +139,7 @@ var updateSeekBarWhileSongPlays = function() {
             var seekBarFillRatio = this.getTime() / this.getDuration();
             var $seekBar = $('.seek-control .seek-bar');
             
-            udateSeekPercentage($seekBar, seekBarFillRatio);
+            updateSeekPercentage($seekBar, seekBarFillRatio);
         });
     }
 };
@@ -228,7 +228,7 @@ var nextSong = function() {
     }
     
     // Set a new current song
-    setSong = currentSongIndex + 1;
+    setSong(currentSongIndex + 1);
     currentSoundFile.play();
     currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
 
