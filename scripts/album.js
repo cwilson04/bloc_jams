@@ -288,10 +288,10 @@ var togglePlayFromPlayerBar = function() {
     //if player bar is on pause switch to playerBarPlayButton
     //if player bar is on play switch to playBarPauseButton
     //I want to select the player-bar and toggle between play and pause
-    if(song.pause) {
-        song.play(playerBarPlayButton);
+    if(currentSoundFile.pause) {
+        currentSoundFile.play(playerBarPlayButton);
     } else {
-        song.pause(playerBarPauseButton);
+        currentSoundFile.pause(playerBarPauseButton);
     }
 }
 
