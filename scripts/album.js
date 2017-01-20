@@ -5,7 +5,7 @@ var setSong = function(songNumber) {
     if (currentSoundFile) {
         currentSoundFile.stop();
     }
-    currentlyPlayingSongNumber = parseInt(songNumber); //used parseInt function to return integer of song number
+    currentlyPlayingSongNumber = songNumber; //used parseInt function to return integer of song number
     currentSongFromAlbum = currentAlbum.songs[songNumber - 1]; //list of songs on the current album and -1 to get corrent index number
 
     currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
@@ -61,10 +61,14 @@ var clickHandler = function() {
 		// Switch from Play -> Pause button to indicate new song is playing.
 		$(this).html(pauseButtonTemplate);
 		currentlyPlayingSongNumber = songNumber;
+		currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+		updatePlayerBarSong();
 	} else if (currentlyPlayingSongNumber === songNumber) {
 		// Switch from Pause -> Play button to pause currently playing song.
 		$(this).html(playButtonTemplate);
+		$('.main-controls .play-pause').html(playerBarPlayButton);
 		currentlyPlayingSongNumber = null;
+		currentSongFromAlbum = null;
 	}
 };
 var onHover = function(event) {
@@ -245,10 +249,9 @@ var previousSong = function() {
     }
     
     // Set a new current song
-    setSong = currentSongIndex + 1;
-    currentSoundFile.play();
-    updateSeekBarWhileSongPlays();
+    currentlyPlayingSongNumber = currentSongIndex + 1;
     currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
+
 
     // Update the Player Bar information
     $('.currently-playing .song-name').text(currentSongFromAlbum.title);
@@ -262,7 +265,6 @@ var previousSong = function() {
     
     $previousSongNumberCell.html(pauseButtonTemplate);
     $lastSongNumberCell.html(lastSongNumber);
-    updateSeekBarWhileSongPlays();
     
 };
 
