@@ -96,11 +96,14 @@ var clickHandler = function() {
     } else if (currentlyPlayingSongNumber === songNumber) {
         //Return true if the sound is paused or is ended. Return false otherwise.
         if (currentSoundFile.isPaused()) {
-            //if song is paused then the play button template will show
+            //if song is paused then the play button template will show so call up the pause button template
             $(this).html(pauseButtonTemplate);
+            //make sure the player bar also calls up the  pause button
             $('.main-controls .play-pause').html(playerBarPauseButton);
+            //play the sound
             currentSoundFile.play();
         } else {
+            //song is not paused so the pause button will show
             $(this).html(playButtonTemplate);
             $('.main-controls .play-pause').html(playerBarPlayButton);
             currentlyPlayingSongNumber = null;
@@ -312,6 +315,7 @@ var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause">
 var playerBarPlayButton = '<span class="ion-play"></span>';
 var playerBarPauseButton = '<span class="ion-pause"></span>';
 
+//call out variables and set their default values
 var currentAlbum = null;
 var currentlyPlayingSongNumber = null;
 var currentSongFromAlbum = null;
