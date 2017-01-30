@@ -2,20 +2,27 @@
 //function that takes one argument, songNumber, and assigns currentlyPlayingSongNumber 
 //and currentSongFromAlbum a new value based on the new song number. 
 var setSong = function(songNumber) {
+    //if there is currently a song playing, stop that song 
     if (currentSoundFile) {
         currentSoundFile.stop();
     }
+    //currentlyPlayingSongNumber is the same as songNumber
     currentlyPlayingSongNumber = songNumber; //used parseInt function to return integer of song number
+    //to find the currentSongFromAlbum take the list of currentAlbum songs and subtract one to get the proper index start
     currentSongFromAlbum = currentAlbum.songs[songNumber - 1]; //list of songs on the current album and -1 to get corrent index number
 
+//new buzz.sound( sources, [settings] ) creates a new sound instance, taken from Buzz methods library
     currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
         formats: [ 'mp3' ],
         preload: true
     });
     
+    //this calls setVolume function listed below, sound.setVolume(volume)
+    //TODO ask Matthew why setVolume function created when already a method listed in Buzz library?
      setVolume(currentVolume);
  };
  
+ //create a function called seek this sets the playback position in seconds
  var seek = function(time) {
      if(currentSoundFile) {
          currentSoundFile.setTime(time);
@@ -32,11 +39,12 @@ var setSong = function(songNumber) {
 //Write a function named getSongNumberCell that takes one argument - number
 // and returns the song number element that corresponds to that song number.
 
-
+//calls td class="song-item-number" and returns the corresponding number
 var getSongNumberCell = function(number) {
   return $('.song-item-number[data-song-number="' + number + '"]');
 };
 
+//creates a row that includes the songNumber, songName and songLength
 var createSongRow = function(songNumber, songName, songLength) {
      var template =
         '<tr class="album-view-song-item">'
@@ -46,23 +54,36 @@ var createSongRow = function(songNumber, songName, songLength) {
       + '</tr>'
       ;
  
+ //creates a jQuery method to call the above row
      var $row = $(template);
      
+//create a function to determine what happens when a user clicks on the songNumber
 var clickHandler = function() {
 
+//this selects the element with the attribute 'data-song-number'
     var songNumber = $(this).attr('data-song-number');
-    
+ 
+ //we set a variable of currentlyPlayingSongNumber to null below
+ //if user clicks on song number and it's not the same as the song currently playing run the function
     if (currentlyPlayingSongNumber !== songNumber) {
+        //if currentlyPlayingSongNumber is not equal to the songNumber clicked AND it is not null
         if (currentlyPlayingSongNumber !== null) {
+            //assigned a variable call currentlyPlayingCell which is the song number in the row
             var currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+            //grab that element from the DOM and make it the currentlyPlayingSongNumber
             currentlyPlayingCell.html(currentlyPlayingSongNumber);
         }
-        
+        //if the currentlyPlayingSongNumber is not the same songNumber that is clicked we call the setSong function which will stop the current
+        //song from playing and play the new songNumber that was clicked
         setSong(songNumber);
         currentSoundFile.play();
+        //once the music starts playing you want the button to change to a pause button
         $(this).html(pauseButtonTemplate);
+    //here we set currentSongFromAlbum is equal to list currentAlbum.songs find by index songNumber - 1
         currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+        //call the function to update the playerBar to same song
         updatePlayerBarSong();
+        //update the currentlyPlayingSongNumber to the song that is playing
         currentlyPlayingSongNumber = songNumber;
         
         // TODO: Check to see if this is supposed to go here?
@@ -70,8 +91,12 @@ var clickHandler = function() {
         var $volumeThumb = $('.volume .thumb');
         $volumeFill.width(currentVolume + '%');
         $volumeThumb.css({left: currentVolume + '%'});
+        
+        //if the currentlyPlayingSong is equal to the song clicked
     } else if (currentlyPlayingSongNumber === songNumber) {
+        //Return true if the sound is paused or is ended. Return false otherwise.
         if (currentSoundFile.isPaused()) {
+            //if song is paused then the play button template will show
             $(this).html(pauseButtonTemplate);
             $('.main-controls .play-pause').html(playerBarPauseButton);
             currentSoundFile.play();
