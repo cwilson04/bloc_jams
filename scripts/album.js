@@ -51,32 +51,37 @@ var createSongRow = function(songNumber, songName, songLength) {
 var clickHandler = function() {
 
     var songNumber = $(this).attr('data-song-number');
-
-    if (currentlyPlayingSongNumber !== null) {
-// Revert to song number for currently playing song because user started playing new song.
-        var currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
-        currentlyPlayingCell.html(currentlyPlayingSongNumber);
-    } else if (currentlyPlayingSongNumber !== songNumber) {
+    
+    if (currentlyPlayingSongNumber !== songNumber) {
+        if (currentlyPlayingSongNumber !== null) {
+            var currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+            currentlyPlayingCell.html(currentlyPlayingSongNumber);
+        }
+        
         setSong(songNumber);
         currentSoundFile.play();
-        updateSeekBarWhileSongPlays();
+        $(this).html(pauseButtonTemplate);
         currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
-
+        updatePlayerBarSong();
+        currentlyPlayingSongNumber = songNumber;
+        
+        // TODO: Check to see if this is supposed to go here?
         var $volumeFill = $('.volume .fill');
         var $volumeThumb = $('.volume .thumb');
         $volumeFill.width(currentVolume + '%');
         $volumeThumb.css({left: currentVolume + '%'});
-
-        $(this).html(pauseButtonTemplate);
-        updatePlayerBarSong();
     } else if (currentlyPlayingSongNumber === songNumber) {
-// Switch from Pause -> Play button to pause currently playing song.
-        $(this).html(playButtonTemplate);
-        $('.main-controls .play-pause').html(playerBarPlayButton);
-        currentlyPlayingSongNumber = null;
-        currentSongFromAlbum = null;
+        if (currentSoundFile.isPaused()) {
+            $(this).html(pauseButtonTemplate);
+            $('.main-controls .play-pause').html(playerBarPauseButton);
+            currentSoundFile.play();
+        } else {
+            $(this).html(playButtonTemplate);
+            $('.main-controls .play-pause').html(playerBarPlayButton);
+            currentlyPlayingSongNumber = null;
+            currentSoundFile.pause();   
+        }
     }
-	updateSeekBarWhileSongPlays();
 };
 
 var onHover = function(event) {
@@ -295,16 +300,6 @@ var $playPauseSelector = $('.main-controls .play-pause')
 //Write a function so that users can play and pause a song from the bar, 
 //The function should be named togglePlayFromPlayerBar(), take no arguments
 
-var togglePlayFromPlayerBar = function() {
-    //if player bar is on pause switch to playerBarPlayButton
-    //if player bar is on play switch to playBarPauseButton
-    //I want to select the player-bar and toggle between play and pause
-    if(currentSoundFile.pause) {
-        currentSoundFile.play(playerBarPlayButton);
-    } else {
-        currentSoundFile.pause(playerBarPauseButton);
-    }
-}
 
 
 $(document).ready(function() {
@@ -312,7 +307,6 @@ $(document).ready(function() {
     setupSeekBars();
     $previousButton.click(previousSong);
     $nextButton.click(nextSong);
-    $playPauseSelector.click(togglePlayFromPlayerBar);
 
 });
 
