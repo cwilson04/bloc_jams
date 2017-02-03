@@ -111,17 +111,20 @@ var clickHandler = function() {
         }
     }
 };
-
+//when the mouse hovers over the song number we determine here what will happen
 var onHover = function(event) {
+    //create new variable to hold the song number that is determined by find method
+    //TODO: ask why we use jQuery $ but not $songNumberCell also why do we need to call both song-item-number and data-song-number?
     var songNumberCell = $(this).find('.song-item-number');
     var songNumber = songNumberCell.attr('data-song-number');
 
-
+//when you hover the mouse if songNumber is not equal to the currentlyPlayingSongNumber then show the play button
     if (songNumber !== currentlyPlayingSongNumber) {
         songNumberCell.html(playButtonTemplate);
     }
 };
 
+//when mouse leaves cell change back to the song number being listed
 var offHover = function(event) {
     var songNumberCell = $(this).find('.song-item-number');
     var songNumber = songNumberCell.attr('data-song-number');
@@ -130,12 +133,18 @@ var offHover = function(event) {
         songNumberCell.html(songNumber);
     }
 };
-     
+ //jQuery find() method. We call it here to find the element with the .song-item-number class that's contained in whichever row is clicked.
+ //jQuery click event listener will call the clickHandler function when element is clicked
      $row.find('.song-item-number').click(clickHandler);
+ //The hover() event listener combines the mouseover and mouseleave functions. 
+ //The first argument is a callback that executes when the user mouses over the $row element and the second is a callback executed when the mouse leaves $row.  
      $row.hover(onHover, offHover);
+ //return $row, which is created with the event listeners attached
      return $row;
  };
  
+//creates a function named setCurrentAlbum that the program calls when the window loads. 
+//Takes an album object as an argument and will utilize the object's stored information by injecting it into the template. 
 var setCurrentAlbum = function(album) {
     currentAlbum = album;
     var $albumTitle = $('.album-view-title');
@@ -150,8 +159,10 @@ var setCurrentAlbum = function(album) {
     $albumReleaseInfo.text(album.year + ' ' + album.label);
     $albumImage.attr('src', album.albumArtUrl);
 
+// clear the album song list HTML to make sure there are no interfering elements
     $albumSongList.empty();
-     
+//us a for loop to go through all the songs from the album object and insert them into $newRow
+//The createSongRow function is called at each loop, passing in the song number, name, and length arguments from our album object.     
      for (var i = 0; i < album.songs.length; i++) {
          var $newRow = createSongRow(i + 1, album.songs[i].title, album.songs[i].duration);
          $albumSongList.append($newRow);
@@ -168,23 +179,32 @@ var updateSeekBarWhileSongPlays = function() {
         });
     }
 };
- 
+
+//function takes 2 arguments,one for the seek bar to alter (either the volume or audio playback controls) 
+//and one for the ratio that will determine the  width and left values of the .fill and .thumb classes.
+//The ratio must be converted to a percentage so we can set the CSS property values as percents. 
 var updateSeekPercentage = function($seekBar, seekBarFillRatio) {
     var offsetXPercent = seekBarFillRatio * 100;
+    //built-in JavaScript Math.max() function to make sure our percentage isn't less than zero and the Math.min() function to make sure it doesn't exceed 100.
     offsetXPercent = Math.max(0, offsetXPercent);
     offsetXPercent = Math.min(100, offsetXPercent);
-    
+//convert percentage to a string and add the % character. S the width of the .fill 
+//class and the left value of the .thumb class, the CSS interprets the value as a percent instead of a unit-less number between 0 and 100.    
     var percentageString = offsetXPercent + '%';
     $seekBar.find('.fill').width(percentageString);
     $seekBar.find('.thumb').css({left: percentageString});
 };
 
+//we need a method for determining the seekBarFillRatio
+//Use a property called pageX. jQuery-specific event value, which holds the X (or horizontal) coordinate at which the event occurred.
+//subtract the offset() of the seek bar held in $(this) from the left side.
 var setupSeekBars = function() {
    var $seekBars = $('.player-bar .seek-bar');
    
    $seekBars.click(function(event) {
        var offsetX = event.pageX - $(this).offset().left;
        var barWidth = $(this).width();
+       //divide offsetX by the width of the entire bar to calculate seekBarFillRatio
        var seekBarFillRatio = offsetX / barWidth;
        
        //check the class of the seek bars parent
@@ -202,9 +222,14 @@ var setupSeekBars = function() {
        updateSeekPercentage($(this), seekBarFillRatio);
    });
    
+   //find the elements with class name .thumb
+   //add event listener to mousedown
    $seekBars.find('.thumb').mousedown(function(event) {
+       //(this) is equal to .thumb - find parent to determine if it is song seek or volume control
        var $seekBar = $(this).parent();
-       
+       //jQuery bind() event is like addEventListener, it takes a string of an event
+       //the event handler inside bind is identical to click behavior
+       //mousemove is attached to $(document) so we can drag thumb after mousing down
         $(document).bind('mousemove.thumb', function(event){
              var offsetX = event.pageX - $seekBar.offset().left;
              var barWidth = $seekBar.width();
@@ -218,18 +243,19 @@ var setupSeekBars = function() {
             
              updateSeekPercentage($seekBar, seekBarFillRatio);
          });
-       
+       //bind() mouseup with .thumb namespace then use unbind() to remove previous event listeners
        $(document).bind('mouseup.thumb', function() {
            $(document).unbind('mousemove.thumb');
            $(document).unbind('mouseup.thumb');
        });
    });
 };
-
+//calls up the album and finds the index of the song on that album and returns it
 var trackIndex = function(album, song) {
     return album.songs.indexOf(song);
 };
  
+//updates the player bar with the song name, artist name and the pause button to pause the song
 var updatePlayerBarSong = function() {
     $('.currently-playing .song-name').text(currentSongFromAlbum.title);
     $('.currently-playing .artist-name').text(currentAlbum.artist);
@@ -237,13 +263,14 @@ var updatePlayerBarSong = function() {
     $('.main-controls .play-pause').html(playerBarPauseButton);
 };
 
+//calls the next song when forward arrows on player bar is clicked
 var nextSong = function() {
     console.log("Inside nextSong");
-    
+    //if is equal to 0 it's at the first song of the album return that song number otherwise return what song number currently on
     var getLastSongNumber = function(index) {
         return index == 0 ? currentAlbum.songs.length : index;
     };
-    
+    //returns the current track + 1
     var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
     currentSongIndex++;
     
@@ -277,6 +304,7 @@ var previousSong = function() {
     
     // Note the difference between this implementation and the one in
     // nextSong()
+    //TODO Go over with Matthew to make sure understand why this is different and compare to next song function
     var getLastSongNumber = function(index) {
         return index == (currentAlbum.songs.length - 1) ? 1 : index + 2;
     };
@@ -325,10 +353,6 @@ var currentVolume = 80;
 var $previousButton = $('.main-controls .previous');
 var $nextButton = $('.main-controls .next');
 var $playPauseSelector = $('.main-controls .play-pause')
-
-//Write a function so that users can play and pause a song from the bar, 
-//The function should be named togglePlayFromPlayerBar(), take no arguments
-
 
 
 $(document).ready(function() {
