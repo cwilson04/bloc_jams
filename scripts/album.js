@@ -3,37 +3,43 @@
 //and currentSongFromAlbum a new value based on the new song number. 
 var setSong = function(songNumber) {
     //if there is currently a song playing, stop that song 
+    //this will stop 2 songs from pay concurrently
     if (currentSoundFile) {
-        currentSoundFile.stop();
+    currentSoundFile.stop();
     }
     //currentlyPlayingSongNumber is the same as songNumber
-    currentlyPlayingSongNumber = songNumber; //used parseInt function to return integer of song number
+    currentlyPlayingSongNumber = parseInt(songNumber); //used parseInt function to return integer of song number
     //to find the currentSongFromAlbum take the list of currentAlbum songs and subtract one to get the proper index start
     currentSongFromAlbum = currentAlbum.songs[songNumber - 1]; //list of songs on the current album and -1 to get corrent index number
-
-//new buzz.sound( sources, [settings] ) creates a new sound instance, taken from Buzz methods library
+    
+    //new buzz.sound( sources, [settings] ) creates a new sound instance, taken from Buzz methods library
     currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
         formats: [ 'mp3' ],
         preload: true
     });
-    
+
     //this calls setVolume function listed below, sound.setVolume(volume)
     //TODO ask Matthew why setVolume function created when already a method listed in Buzz library?
-     setVolume(currentVolume);
- };
- 
- //create a function called seek this sets the playback position in seconds
- var seek = function(time) {
-     if(currentSoundFile) {
-         currentSoundFile.setTime(time);
-     }
- }
- 
- var setVolume = function(volume) {
-     if (currentSoundFile) {
-         currentSoundFile.setVolume(volume);
-     }
+    setVolume(currentVolume);
+};
 
+//create a function called seek this sets the playback position in seconds
+var seek = function(time) {
+    if(currentSoundFile) {
+     currentSoundFile.setTime(time);
+    }
+}
+//if current sound file exists set volume to the default volume
+var setVolume = function(volume) {
+    if (currentSoundFile) {
+     currentSoundFile.setVolume(volume);
+    }
+
+    // TODO: Check to see if this is supposed to go here?
+    var $volumeFill = $('.volume .fill');
+    var $volumeThumb = $('.volume .thumb');
+    $volumeFill.width(currentVolume + '%');
+    $volumeThumb.css({left: currentVolume + '%'});
 };
 
 //Write a function named getSongNumberCell that takes one argument - number
@@ -86,11 +92,6 @@ var clickHandler = function() {
         //update the currentlyPlayingSongNumber to the song that is playing
         currentlyPlayingSongNumber = songNumber;
         
-        // TODO: Check to see if this is supposed to go here?
-        var $volumeFill = $('.volume .fill');
-        var $volumeThumb = $('.volume .thumb');
-        $volumeFill.width(currentVolume + '%');
-        $volumeThumb.css({left: currentVolume + '%'});
         
         //if the currentlyPlayingSong is equal to the song clicked
     } else if (currentlyPlayingSongNumber === songNumber) {
@@ -280,6 +281,7 @@ var nextSong = function() {
     
     // Set a new current song
     setSong(currentSongIndex + 1);
+    //play song whiile skipping
     currentSoundFile.play();
     updateSeekBarWhileSongPlays();
     currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
